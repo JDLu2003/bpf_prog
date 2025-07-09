@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
     }
 
     // Sleep and periodically print stats
-    for (int i = 0; i < 10; i++) {
+    for (;;) {
         sleep(1);
 
         u32 val;
@@ -58,6 +58,7 @@ int main(int argc, char **argv) {
                 printf("%s count = %u\n", keys[j], val);
             }
         }
+        sleep(1);
     }
 
 cleanup:
