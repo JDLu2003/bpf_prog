@@ -152,4 +152,13 @@ int trace_invalidate_mapping_pages(struct pt_regs *ctx) {
     return 0;
 }
 
+SEC("kprobe/page_cache_ra_unbounded")
+int trace_page_cache_ra_unbounded(struct pt_regs *ctx) {
+    // struct readahead_control *ractl = (struct readahead_control *)PT_REGS_PARM1(ctx);
+    unsigned long nr_to_read = PT_REGS_PARM2(ctx);
+    unsigned long lookahead_size = PT_REGS_PARM3(ctx);
+    bpf_printk("page_cache_ra_unbounded: nr_to_read=%lu, lookahead_size=%lu", nr_to_read, lookahead_size);
+    return 0;
+}
+
 char LICENSE[] SEC("license") = "Dual BSD/GPL";
