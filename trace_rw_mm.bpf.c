@@ -119,23 +119,17 @@ int trace_add_to_page_cache_lru(struct pt_regs *ctx) {
     return 0;
 }
 
-struct trace_event_raw_page_fault {
-    unsigned long address;
-    unsigned int error_code;
-    unsigned int trap_nr;
-    unsigned int signr;
-};
-
-
-SEC("tracepoint/exceptions/page_fault_user")
-int handle_user_pf(struct trace_event_raw_page_fault* ctx) {
+// 使用 kprobe 方式追踪 handle_mm_fault
+SEC("kprobe/handle_mm_fault")
+int handle_user_pf(struct pt_regs *ctx) {
     if (!check_pid())
         return 0;
     stringkey key = "page_fault_user";
     u32 *v = bpf_map_lookup_elem(&my_map, &key);
     if (v)
         (*v)++;
-    bpf_printk("[PF] pid=%d addr=0x%llx err=0x%x", bpf_get_current_pid_tgid() >> 32, ctx->address, ctx->error_code);
+    unsigned long addr = PT_REGS_PARM2(ctx);
+    bpf_printk("[PF] pid=%d addr=0x%lx", bpf_get_current_pid_tgid() >> 32, addr);
     return 0;
 }
 
