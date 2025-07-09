@@ -119,6 +119,14 @@ int trace_add_to_page_cache_lru(struct pt_regs *ctx) {
     return 0;
 }
 
+struct trace_event_raw_page_fault {
+    unsigned long address;
+    unsigned int error_code;
+    unsigned int trap_nr;
+    unsigned int signr;
+};
+
+
 SEC("tracepoint/exceptions/page_fault_user")
 int handle_user_pf(struct trace_event_raw_page_fault* ctx) {
     if (!check_pid())
