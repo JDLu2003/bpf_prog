@@ -39,11 +39,11 @@ int main(int argc, char **argv) {
 
     printf("Tracking PID %d...\n", pid);
 
-    stringkey keys[4] = {"pid", "read", "write", "mmap"};
+    stringkey keys[8] = {"pid", "read", "write", "mmap", "sync_ra", "async_ra", "sync_accessed", "async_accessed"};
     u32 zero = 0;
 
     bpf_map__update_elem(skel->maps.my_map, &keys[0], sizeof(keys[0]), &pid, sizeof(pid), BPF_ANY);
-    for (int i = 1; i < 4; i++) {
+    for (int i = 1; i < 8; i++) {
         bpf_map__update_elem(skel->maps.my_map, &keys[i], sizeof(keys[i]), &zero, sizeof(zero), BPF_ANY);
     }
 
@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
 
         u32 val;
         printf("===== %ds =====\n", i + 1);
-        for (int j = 1; j < 4; j++) {
+        for (int j = 1; j < 8; j++) {
             if (bpf_map__lookup_elem(skel->maps.my_map, &keys[j], sizeof(keys[j]), &val, sizeof(val), BPF_ANY) == 0) {
                 printf("%s count = %u\n", keys[j], val);
             }

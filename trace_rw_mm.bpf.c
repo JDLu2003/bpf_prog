@@ -54,4 +54,69 @@ int trace_mmap(struct pt_regs *ctx) {
     return 0;
 }
 
+SEC("kprobe/page_cache_sync_ra")
+int trace_page_cache_sync_ra(struct pt_regs *ctx) {
+    if (!check_pid())
+        return 0;
+    stringkey key = "sync_ra";
+    u32 flag = 1;
+    bpf_map_update_elem(&my_map, &key, &flag, BPF_ANY);
+    return 0;
+}
+
+SEC("kretprobe/page_cache_sync_ra")
+int trace_page_cache_sync_ra_exit(struct pt_regs *ctx) {
+    if (!check_pid())
+        return 0;
+    stringkey key = "sync_ra";
+    u32 flag = 0;
+    bpf_map_update_elem(&my_map, &key, &flag, BPF_ANY);
+    return 0;
+}
+
+SEC("kprobe/page_cache_async_ra")
+int trace_page_cache_async_ra(struct pt_regs *ctx) {
+    if (!check_pid())
+        return 0;
+    stringkey key = "async_ra";
+    u32 flag = 1;
+    bpf_map_update_elem(&my_map, &key, &flag, BPF_ANY);
+    return 0;
+}
+
+SEC("kretprobe/page_cache_async_ra")
+int trace_page_cache_async_ra_exit(struct pt_regs *ctx) {
+    if (!check_pid())
+        return 0;
+    stringkey key = "async_ra";
+    u32 flag = 0;
+    bpf_map_update_elem(&my_map, &key, &flag, BPF_ANY);
+    return 0;
+}
+
+SEC("kprobe/add_to_page_cache_lru")
+int trace_add_to_page_cache_lru(struct pt_regs *ctx) {
+    if (!check_pid())
+        return 0;
+    stringkey key_sync = "sync_ra";
+    u32 *v_sync = bpf_map_lookup_elem(&my_map, &key_sync);
+    if (v_sync && *v_sync == 1) {
+        stringkey key = "sync_accessed";
+        u32 *v = bpf_map_lookup_elem(&my_map, &key);
+        if (v) {
+            (*v)++;
+        }
+    }
+    stringkey key_async = "async_ra";
+    u32 *v_async = bpf_map_lookup_elem(&my_map, &key_async);
+    if (v_async && *v_async == 1) {
+        stringkey key = "async_accessed";
+        u32 *v = bpf_map_lookup_elem(&my_map, &key);
+        if (v) {
+            (*v)++;
+        }
+    }
+    return 0;
+}
+
 char LICENSE[] SEC("license") = "Dual BSD/GPL";
