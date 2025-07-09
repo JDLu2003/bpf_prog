@@ -12,16 +12,6 @@ struct {
     __type(value, u32);
 } bench_map SEC(".maps");
 
-struct invmap_evt {
-    u64 ts;
-    u64 mapping;
-    u64 start;
-    u64 end;
-};
-
-struct {
-    __uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
-} invmap_events SEC(".maps");
 
 static __always_inline int check_pid() {
     stringkey key = "pid";
