@@ -12,6 +12,17 @@ struct {
     __type(value, u32);
 } bench_map SEC(".maps");
 
+struct invmap_evt {
+    u64 ts;
+    u64 mapping;
+    u64 start;
+    u64 end;
+};
+
+struct {
+    __uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
+} invmap_events SEC(".maps");
+
 static __always_inline int check_pid() {
     stringkey key = "pid";
     u32 mypid = bpf_get_current_pid_tgid();
@@ -130,6 +141,15 @@ int handle_user_pf(struct pt_regs *ctx) {
         (*v)++;
     unsigned long addr = PT_REGS_PARM2(ctx);
     bpf_printk("[PF] pid=%d addr=0x%lx", bpf_get_current_pid_tgid() >> 32, addr);
+    return 0;
+}
+
+SEC("kprobe/invalidate_mapping_pages")
+int trace_invalidate_mapping_pages(struct pt_regs *ctx) {
+    u64 mapping = (u64)PT_REGS_PARM1(ctx);
+    u64 start = PT_REGS_PARM2(ctx);
+    u64 end = PT_REGS_PARM3(ctx);
+    bpf_printk("invalidate_mapping_pages: mapping=%p, start=%llu, end=%llu", (void*)mapping, start, end);
     return 0;
 }
 
