@@ -158,6 +158,11 @@ int trace_page_cache_ra_unbounded(struct pt_regs *ctx) {
     unsigned long nr_to_read = PT_REGS_PARM2(ctx);
     unsigned long lookahead_size = PT_REGS_PARM3(ctx);
     bpf_printk("page_cache_ra_unbounded: nr_to_read=%lu, lookahead_size=%lu", nr_to_read, lookahead_size);
+    stringkey key = "page_cache_ra_unbounded";
+    u32 *v = bpf_map_lookup_elem(&bench_map, &key);
+    if (v) {
+        (*v)++;
+    }
     return 0;
 }
 

@@ -46,10 +46,10 @@ int main(int argc, char **argv) {
     }
 
     // 父进程：将子进程 pid 写入 bpf map
-    stringkey keys[9] = {"pid", "read", "write", "mmap", "sync_ra", "async_ra", "sync_accessed", "async_accessed", "page_fault_user"};
+    stringkey keys[10] = {"pid", "read", "write", "mmap", "sync_ra", "async_ra", "sync_accessed", "async_accessed", "page_fault_user", "page_cache_ra_unbounded"};
     u32 zero = 0;
     bpf_map__update_elem(skel->maps.bench_map, &keys[0], sizeof(keys[0]), &child, sizeof(child), BPF_ANY);
-    for (int i = 1; i < 9; i++) {
+    for (int i = 1; i < 10; i++) {
         bpf_map__update_elem(skel->maps.bench_map, &keys[i], sizeof(keys[i]), &zero, sizeof(zero), BPF_ANY);
     }
 
@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
         sleep(1);
         u32 val;
         printf("==== stats ====\n");
-        for (int j = 1; j < 9; j++) {
+        for (int j = 1; j < 10; j++) {
             if (bpf_map__lookup_elem(skel->maps.bench_map, &keys[j], sizeof(keys[j]), &val, sizeof(val), BPF_ANY) == 0) {
                 printf("%s count = %u\n", keys[j], val);
             }
