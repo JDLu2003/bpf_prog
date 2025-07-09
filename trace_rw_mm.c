@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
     }
 
     // Sleep and periodically print stats
-    for (;;) {
+    for (int i = 0;; i++) {
         sleep(1);
 
         u32 val;
