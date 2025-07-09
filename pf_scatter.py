@@ -1,48 +1,39 @@
 import re
-import time
+import sys
 import matplotlib.pyplot as plt
-from datetime import datetime
-
-# 可选：trace_pipe 路径
-TRACE_PIPE = '/sys/kernel/debug/tracing/trace_pipe'
 
 # 正则匹配 [PF] pid=xxx addr=0x...
 PF_RE = re.compile(r'\[PF\] pid=(\d+) addr=0x([0-9a-fA-F]+)')
 
-times = []
-addrs = []
-start_time = None
-
-print('请用 root 权限运行，并确保 trace_pipe 有 page fault 日志...')
-
-try:
-    with open(TRACE_PIPE, 'r') as f:
-        while True:
-            line = f.readline()
-            if not line:
-                time.sleep(0.01)
-                continue
+def main():
+    if len(sys.argv) < 2:
+        print(f"用法: python3 {sys.argv[0]} <logfile>")
+        sys.exit(1)
+    logfile = sys.argv[1]
+    times = []
+    addrs = []
+    start_time = None
+    with open(logfile, 'r') as f:
+        for line in f:
             m = PF_RE.search(line)
             if m:
-                now = time.time()
-                if start_time is None:
-                    start_time = now
-                rel_time = now - start_time
+                # 假设日志每行前面有时间戳（如 12.345: ...），可自行扩展解析
+                # 这里只用行号做伪时间
+                times.append(len(times))
                 addr = int(m.group(2), 16)
-                times.append(rel_time)
                 addrs.append(addr)
-                print(f"t={rel_time:.3f}s, addr=0x{addr:x}")
-except KeyboardInterrupt:
-    print('采集结束，开始绘图...')
+    if times and addrs:
+        plt.figure(figsize=(10, 5))
+        plt.scatter(times, addrs, s=8, alpha=0.7)
+        plt.xlabel('Event Index')
+        plt.ylabel('Fault Address')
+        plt.title('Page Fault Address Scatter (from log file)')
+        plt.grid(True)
+        plt.tight_layout()
+        plt.savefig('pf_scatter.png')
+        print('图片已保存为 pf_scatter.png')
+    else:
+        print('未在日志中发现 page fault 记录！')
 
-if times and addrs:
-    plt.figure(figsize=(10, 5))
-    plt.scatter(times, addrs, s=8, alpha=0.7)
-    plt.xlabel('Time (s)')
-    plt.ylabel('Fault Address')
-    plt.title('Page Fault Address vs. Time')
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
-else:
-    print('未采集到 page fault 日志！') 
+if __name__ == '__main__':
+    main() 
