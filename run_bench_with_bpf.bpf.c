@@ -26,7 +26,7 @@ SEC("ksyscall/read")
 int trace_read(struct pt_regs *ctx) {
     if (!check_pid())
         return 0;
-    bpf_printk("[BPF] 进入 read 钩子, pid=%d", bpf_get_current_pid_tgid() >> 32);
+    bpf_printk("[BPF] enter read hook, pid=%d", bpf_get_current_pid_tgid() >> 32);
     stringkey key = "read";
     u32 *v = bpf_map_lookup_elem(&bench_map, &key);
     if (v)
@@ -38,7 +38,7 @@ SEC("ksyscall/write")
 int trace_write(struct pt_regs *ctx) {
     if (!check_pid())
         return 0;
-    bpf_printk("[BPF] 进入 write 钩子, pid=%d", bpf_get_current_pid_tgid() >> 32);
+    bpf_printk("[BPF] enter write hook, pid=%d", bpf_get_current_pid_tgid() >> 32);
     stringkey key = "write";
     u32 *v = bpf_map_lookup_elem(&bench_map, &key);
     if (v)
@@ -50,7 +50,7 @@ SEC("ksyscall/mmap")
 int trace_mmap(struct pt_regs *ctx) {
     if (!check_pid())
         return 0;
-    bpf_printk("[BPF] 进入 mmap 钩子, pid=%d", bpf_get_current_pid_tgid() >> 32);
+    bpf_printk("[BPF] enter mmap hook, pid=%d", bpf_get_current_pid_tgid() >> 32);
     stringkey key = "mmap";
     u32 *v = bpf_map_lookup_elem(&bench_map, &key);
     if (v)
@@ -62,7 +62,7 @@ SEC("kprobe/page_cache_sync_ra")
 int trace_page_cache_sync_ra(struct pt_regs *ctx) {
     if (!check_pid())
         return 0;
-    bpf_printk("[BPF] 进入 page_cache_sync_ra 钩子, pid=%d", bpf_get_current_pid_tgid() >> 32);
+    bpf_printk("[BPF] enter page_cache_sync_ra hook, pid=%d", bpf_get_current_pid_tgid() >> 32);
     stringkey key = "sync_ra";
     u32 flag = 1;
     bpf_map_update_elem(&bench_map, &key, &flag, BPF_ANY);
@@ -73,7 +73,7 @@ SEC("kretprobe/page_cache_sync_ra")
 int trace_page_cache_sync_ra_exit(struct pt_regs *ctx) {
     if (!check_pid())
         return 0;
-    bpf_printk("[BPF] 进入 page_cache_sync_ra_exit 钩子, pid=%d", bpf_get_current_pid_tgid() >> 32);
+    bpf_printk("[BPF] enter page_cache_sync_ra_exit hook, pid=%d", bpf_get_current_pid_tgid() >> 32);
     stringkey key = "sync_ra";
     u32 flag = 0;
     bpf_map_update_elem(&bench_map, &key, &flag, BPF_ANY);
@@ -84,7 +84,7 @@ SEC("kprobe/page_cache_async_ra")
 int trace_page_cache_async_ra(struct pt_regs *ctx) {
     if (!check_pid())
         return 0;
-    bpf_printk("[BPF] 进入 page_cache_async_ra 钩子, pid=%d", bpf_get_current_pid_tgid() >> 32);
+    bpf_printk("[BPF] enter page_cache_async_ra hook, pid=%d", bpf_get_current_pid_tgid() >> 32);
     stringkey key = "async_ra";
     u32 flag = 1;
     bpf_map_update_elem(&bench_map, &key, &flag, BPF_ANY);
@@ -95,7 +95,7 @@ SEC("kretprobe/page_cache_async_ra")
 int trace_page_cache_async_ra_exit(struct pt_regs *ctx) {
     if (!check_pid())
         return 0;
-    bpf_printk("[BPF] 进入 page_cache_async_ra_exit 钩子, pid=%d", bpf_get_current_pid_tgid() >> 32);
+    bpf_printk("[BPF] enter page_cache_async_ra_exit hook, pid=%d", bpf_get_current_pid_tgid() >> 32);
     stringkey key = "async_ra";
     u32 flag = 0;
     bpf_map_update_elem(&bench_map, &key, &flag, BPF_ANY);
@@ -106,7 +106,7 @@ SEC("kprobe/add_to_page_cache_lru")
 int trace_add_to_page_cache_lru(struct pt_regs *ctx) {
     if (!check_pid())
         return 0;
-    bpf_printk("[BPF] 进入 add_to_page_cache_lru 钩子, pid=%d", bpf_get_current_pid_tgid() >> 32);
+    bpf_printk("[BPF] enter add_to_page_cache_lru hook, pid=%d", bpf_get_current_pid_tgid() >> 32);
     stringkey key_sync = "sync_ra";
     u32 *v_sync = bpf_map_lookup_elem(&bench_map, &key_sync);
     if (v_sync && *v_sync == 1) {
@@ -133,7 +133,7 @@ SEC("kprobe/handle_mm_fault")
 int handle_user_pf(struct pt_regs *ctx) {
     if (!check_pid())
         return 0;
-    bpf_printk("[BPF] 进入 handle_mm_fault 钩子, pid=%d", bpf_get_current_pid_tgid() >> 32);
+    bpf_printk("[BPF] enter handle_mm_fault hook, pid=%d", bpf_get_current_pid_tgid() >> 32);
     stringkey key = "page_fault_user";
     u32 *v = bpf_map_lookup_elem(&bench_map, &key);
     if (v)
@@ -153,4 +153,3 @@ int trace_invalidate_mapping_pages(struct pt_regs *ctx) {
 }
 
 char LICENSE[] SEC("license") = "Dual BSD/GPL";
-
