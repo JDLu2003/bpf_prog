@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <bpf/libbpf.h>
-#include "trace.skel.h"
+#include "trace_rw_mm.skel.h"
 
 typedef char stringkey[64];
 typedef __u32 u32;
