@@ -119,4 +119,16 @@ int trace_add_to_page_cache_lru(struct pt_regs *ctx) {
     return 0;
 }
 
+SEC("tracepoint/exceptions/page_fault_user")
+int handle_user_pf(struct trace_event_raw_page_fault* ctx) {
+    if (!check_pid())
+        return 0;
+    stringkey key = "page_fault_user";
+    u32 *v = bpf_map_lookup_elem(&my_map, &key);
+    if (v)
+        (*v)++;
+    bpf_printk("[PF] pid=%d addr=0x%llx err=0x%x", bpf_get_current_pid_tgid() >> 32, ctx->address, ctx->error_code);
+    return 0;
+}
+
 char LICENSE[] SEC("license") = "Dual BSD/GPL";
