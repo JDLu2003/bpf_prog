@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
     while (1) {
         sleep(1);
         u32 val;
-        printf("==== stats ===="\n);
+        printf("==== stats ====\n");
         for (int j = 1; j < 9; j++) {
             if (bpf_map__lookup_elem(skel->maps.bench_map, &keys[j], sizeof(keys[j]), &val, sizeof(val), BPF_ANY) == 0) {
                 printf("%s count = %u\n", keys[j], val);
