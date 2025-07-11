@@ -11,6 +11,8 @@ typedef __u32 u32;
 
 int main(int argc, char **argv) {
 
+    struct timespec start_time, end_time;
+
     // clear all cache
     int ret = system("sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'");
 
@@ -48,13 +50,15 @@ int main(int argc, char **argv) {
         perror("fork");
         goto cleanup;
     }
-    clock_t start_time = clock();
+
     if (child == 0) {
         // 子进程：执行测试命令
         execvp(argv[1], &argv[1]);
         perror("execvp");
         exit(127);
     }
+
+    clock_gettime(CLOCK_MONOTONIC, &start_time);
 
     // 父进程：将子进程 pid 写入 bpf map
     stringkey keys[10] = {"pid", "read", "write", "mmap", "sync_ra", "async_ra", "sync_accessed", "async_accessed", "page_fault_user", "page_cache_ra_unbounded"};
@@ -76,10 +80,11 @@ int main(int argc, char **argv) {
         //     }
         // }
         // 检查子进程是否结束
-        pid_t w = waitpid(child, &status, WNOHANG);
+        pid_t w = waitpid(child, &status, 0);
         if (w == child) {
-            clock_t end_time = clock();
-            double period_time = (double)(end_time - start_time);
+            clock_gettime(CLOCK_MONOTONIC, &end_time);
+            double period_time = (end_time.tv_sec - start_time.tv_sec) * 1e6 +
+                     (end_time.tv_nsec - start_time.tv_nsec) / 1e3;
             printf("============================================\nTotal execution time: %.6f micro seconds\n============================================\n", period_time);
             printf("Child process exited.\n");
             break;
