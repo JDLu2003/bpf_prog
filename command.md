@@ -19,3 +19,7 @@ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
 求文件的 md5 的值
 
 md5sum
+
+查看 bpf 的输出
+
+cat /sys/kernel/debug/tracing/trace_pipe
