@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
         if (w == child) {
             clock_t end_time = clock();
             double period_time = (double)(end_time - start_time);
-            printf("============================================\nTotal execution time: %.6f seconds\n============================================\n", period_time);
+            printf("============================================\nTotal execution time: %.6f micro seconds\n============================================\n", period_time);
             printf("Child process exited.\n");
             break;
         }
