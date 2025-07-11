@@ -10,6 +10,16 @@ typedef char stringkey[64];
 typedef __u32 u32;
 
 int main(int argc, char **argv) {
+
+    // clear all cache
+    int ret = system("sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'");
+
+    if (ret == -1) {
+        fprintf(stderr, "Failed to clear all cache\n");
+    } else {
+        fprintf(stderr, "Succeessfil cleared all caches\n");
+    }
+
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <command> [args ...]\n", argv[0]);
         return 1;
