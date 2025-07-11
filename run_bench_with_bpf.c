@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
-#include <signal.h>
+#include <time.h>
 #include <bpf/libbpf.h>
 #include "run_bench_with_bpf.skel.h"
 
@@ -48,6 +48,7 @@ int main(int argc, char **argv) {
         perror("fork");
         goto cleanup;
     }
+    clock_t start_time = clock();
     if (child == 0) {
         // 子进程：执行测试命令
         execvp(argv[1], &argv[1]);
@@ -77,6 +78,9 @@ int main(int argc, char **argv) {
         // 检查子进程是否结束
         pid_t w = waitpid(child, &status, WNOHANG);
         if (w == child) {
+            clock_t end_time = clock();
+            double period_time = (double)(end_time - start_time);
+            printf("============================================\nTotal execution time: %.6f seconds\n============================================\n", period_time);
             printf("Child process exited.\n");
             break;
         }
