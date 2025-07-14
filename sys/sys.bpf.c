@@ -11,7 +11,7 @@ char LICENSE[] SEC("license") = "GPL";
 SEC("kprobe/do_sys_openat2")
 int handle_open(struct pt_regs *ctx) {
   int dfd = PT_REGS_PARM1(ctx);
-  const char *filename = (const char __user *)PT_REGS_PARM2(ctx);
+  const char *filename = (const char *)PT_REGS_PARM2(ctx);
   struct open_how *how = (struct open_how *)PT_REGS_PARM3(ctx);
 
   char fname[256];
