@@ -38,8 +38,7 @@ int handle_open(struct pt_regs *ctx) {
     char fname[256];
     bpf_probe_read_user_str(fname, sizeof(fname), filename);
 
-    if (callbacks.on_open)
-      callbacks.on_open(fname);
+    on_open(fname);
   }
   return 0;
 }
