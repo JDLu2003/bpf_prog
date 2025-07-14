@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
   }
 
   // 父进程：将子进程 pid 写入 bpf map
-  stringkey keys = "pid";
+  stringkey keys[1] = {"pid"};
   bpf_map__update_elem(skel->maps.sys_map, &keys[0], sizeof(keys[0]), &child,
                        sizeof(child), BPF_ANY);
 

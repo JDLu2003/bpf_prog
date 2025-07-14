@@ -22,8 +22,7 @@ static __always_inline int check_pid() {
   u32 *val = bpf_map_lookup_elem(&sys_map, &key);
   if (val && *val == mypid)
     return 1;
-  else
-    return 0;
+  return 0;
 }
 
 char LICENSE[] SEC("license") = "GPL";
