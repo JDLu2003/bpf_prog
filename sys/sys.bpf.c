@@ -9,8 +9,7 @@
 char LICENSE[] SEC("license") = "GPL";
 
 SEC("kprobe/do_sys_openat2")
-int BPF_KPROBE(handle_open, int dfd, const char __user *filename,
-               struct open_how *how) {
+int handle_open(int dfd, const char __user *filename, struct open_how *how) {
   char fname[256];
   bpf_probe_read_user_str(fname, sizeof(fname), filename);
 
