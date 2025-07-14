@@ -4,7 +4,4 @@ static void user_on_open(const char *filename) {
   bpf_printk("User callback impl: we are opening %s now!\n", filename);
 }
 
-
-struct user_callbacks callbacks SEC(".rodata") = {
-  .on_open = user_on_open,
-};
+#define on_open user_on_open
