@@ -12,7 +12,7 @@ typedef char stringkey[64];
 struct {
   __uint(type, BPF_MAP_TYPE_HASH);
   __uint(max_entries, 128);
-  strintkey *key;
+  stringkey *key;
   __type(value, u32);
 } sys_map SEC(".maps");
 
