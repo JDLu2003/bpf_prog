@@ -23,3 +23,11 @@ md5sum
 查看 bpf 的输出
 
 cat /sys/kernel/debug/tracing/trace_pipe
+
+查看内存使用
+
+free -h
+
+查看磁盘信息
+
+df -h
