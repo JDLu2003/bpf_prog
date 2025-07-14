@@ -5,6 +5,6 @@ static void user_on_open(const char *filename) {
 }
 
 
-const struct user_callbacks callbacks = {
+struct user_callbacks callbacks SEC(".bss") = {
   .on_open = user_on_open,
 };

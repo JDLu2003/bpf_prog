@@ -11,8 +11,6 @@ typedef __u32 u32;
 
 int main(int argc, char **argv) {
 
-  struct timespec start_time, end_time;
-
   // clear all cache
   int ret = system("sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'");
 
@@ -62,7 +60,6 @@ int main(int argc, char **argv) {
 
   // 父进程：将子进程 pid 写入 bpf map
   stringkey keys = "pid";
-  u32 zero = 0;
   bpf_map__update_elem(skel->maps.sys_map, &keys[0], sizeof(keys[0]), &child,
                        sizeof(child), BPF_ANY);
 
