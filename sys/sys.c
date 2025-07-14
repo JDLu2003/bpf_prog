@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
   // 父进程：将子进程 pid 写入 bpf map
   stringkey keys = "pid";
   u32 zero = 0;
-  bpf_map__update_elem(skel->maps.bench_map, &keys[0], sizeof(keys[0]), &child,
+  bpf_map__update_elem(skel->maps.sys_map, &keys[0], sizeof(keys[0]), &child,
                        sizeof(child), BPF_ANY);
 
   printf("Running '%s' (pid=%d), monitoring...\n", argv[1], child);
