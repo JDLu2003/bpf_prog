@@ -9,6 +9,6 @@ __attribute__((weak)) void default_on_open(const char *filename) {
   bpf_printk("default on_open: %s\n", filename);
 }
 
-extern const struct user_callbacks callbacks;
+extern struct user_callbacks callbacks;
 
 #endif
