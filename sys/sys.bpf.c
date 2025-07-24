@@ -24,20 +24,26 @@ static __always_inline int check_pid() {
     return 1;
   return 0;
 }
+#define CHECK_PID()                                                            \
+  do {                                                                         \
+    if (check_pid() == 0) {                                                    \
+      return 0;                                                                \
+    }                                                                          \
+  } while (0)
 
 char LICENSE[] SEC("license") = "GPL";
 
 SEC("kprobe/do_sys_openat2")
 int handle_open(struct pt_regs *ctx) {
-  if (check_pid()) {
-    int dfd = PT_REGS_PARM1(ctx);
-    const char *filename = (const char *)PT_REGS_PARM2(ctx);
-    struct open_how *how = (struct open_how *)PT_REGS_PARM3(ctx);
 
-    char fname[256];
-    bpf_probe_read_user_str(fname, sizeof(fname), filename);
+  CHECK_PID();
+  int dfd = PT_REGS_PARM1(ctx);
+  const char *filename = (const char *)PT_REGS_PARM2(ctx);
+  struct open_how *how = (struct open_how *)PT_REGS_PARM3(ctx);
 
-    on_open(fname);
-  }
+  char fname[256];
+  bpf_probe_read_user_str(fname, sizeof(fname), filename);
+
+  on_open(fname);
   return 0;
 }
